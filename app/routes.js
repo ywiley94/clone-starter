@@ -67,12 +67,16 @@ app.get('/page/:id', isLoggedIn, function(req, res) {
 // post routes
 app.post('/makePost', upload.single('file-to-upload'), (req, res) => {
   let user = req.user._id
-  db.collection('posts').save({caption: req.body.caption, img: 'images/uploads/' + req.file.filename, postedBy: user}, (err, result) => {
+  db.collection('posts').save({caption: req.body.caption, img: 'images/uploads/' + req.file.filename, postedBy: user, thumbUp: 0}, (err, result) => {
     if (err) return console.log(err)
     console.log('saved to database')
     res.redirect('/profile')
   })
 })
+
+// app.post('/makeComment', (req, res) => {
+
+// })
 
 
 // message board routes ===============================================================
@@ -87,7 +91,7 @@ app.post('/makePost', upload.single('file-to-upload'), (req, res) => {
 
     app.put('/messages', (req, res) => {
       db.collection('messages')
-      .findOneAndUpdate({name: req.body.name, msg: req.body.msg}, {
+      .findOneAndUpdate({
         $set: {
           thumbUp:req.body.thumbUp + 1
         }

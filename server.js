@@ -2,9 +2,10 @@
 
 // set up ======================================================================
 // get all the tools we need
+require('dotenv').config()
 var express  = require('express');
 var app      = express();
-var port     = process.env.PORT || 8080;
+// var port     = process.env.PORT || 8080;
 const MongoClient = require('mongodb').MongoClient
 var mongoose = require('mongoose');
 var passport = require('passport');
@@ -17,16 +18,20 @@ var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var session      = require('express-session');
 
-var configDB = require('./config/database.js');
+// var configDB = require('./config/database.js');
 
-var db
-
+// const db = require('./config/database').MongoURI;
+const PORT = process.env.PORT || 3000;
 // configuration ===============================================================
-mongoose.connect(configDB.url, (err, database) => {
-  if (err) return console.log(err)
-  db = database
-  require('./app/routes.js')(app, passport, db, multer, ObjectId);
-}); // connect to our database
+mongoose.connect(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true })
+const db = mongoose.connection;
+db.on('error', (error) => {
+    console.log(error)
+});
+db.once('open', () => {
+    require('./app/routes.js')(app, passport, db, multer, ObjectId);
+    console.log('Connected to database')
+}) // connect to our database
 
 require('./config/passport')(passport); // pass passport for configuration
 
@@ -52,5 +57,5 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 
 
 // launch ======================================================================
-app.listen(port);
-console.log('The magic happens on port ' + port);
+app.listen(PORT);
+console.log('The magic happens on port ' + PORT);

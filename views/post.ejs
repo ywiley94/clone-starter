@@ -25,7 +25,17 @@
             <li class="message">
               <h4><%= posts[i].caption %></h4>
               <img src="../<%= posts[i].img %>" alt="">
+              <span><%= posts[i].thumbUp %></span>
+
+              <span><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+              <span><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+              <form action="/makeComment" method="post">
+                <h5>Comments</h5>
+                <input id="comment" type="text" name="comments">
+                <button id="commentSubmit" type="button"> Submit </button>
+              </form>
             </li>
+
           <% } %>
           </ul>
 
