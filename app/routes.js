@@ -1,4 +1,6 @@
-module.exports = function(app, passport, db, multer, ObjectId) {
+var mongoose = require('mongoose');
+
+module.exports = function(app, passport, db, multer, ObjectID) {
 
  // Image Upload Code =========================================================================
 var storage = multer.diskStorage({
@@ -39,7 +41,8 @@ var upload = multer({storage: storage});
   });
   //post page
   app.get('/post/:zebra', isLoggedIn, function(req, res) {
-    let postId = ObjectId(req.params.zebra)
+    var postId = mongoose.Types.ObjectId(req.params.zebra);
+    // let postId = ObjectID(req.params.zebra)
     console.log(postId)
     db.collection('posts').find({_id: postId}).toArray((err, result) => {
       if (err) return console.log(err)
@@ -50,7 +53,8 @@ var upload = multer({storage: storage});
 });
 //profile page
 app.get('/page/:id', isLoggedIn, function(req, res) {
-  let postId = ObjectId(req.params.id)
+  var postId = mongoose.Types.ObjectId(req.params.id);
+  // let postId = ObjectID(req.params.id)
   db.collection('posts').find({postedBy: postId}).toArray((err, result) => {
     if (err) return console.log(err)
     res.render('page.ejs', {
@@ -81,19 +85,20 @@ app.post('/makePost', upload.single('file-to-upload'), (req, res) => {
 
 // message board routes ===============================================================
 
-    app.post('/messages', (req, res) => {
-      db.collection('messages').save({name: req.body.name, msg: req.body.msg, thumbUp: 0, thumbDown:0}, (err, result) => {
+    app.post('/post/comments', (req, res) => {
+      db.collection('comments').save({comment: req.body.comment}, (err, result) => {
         if (err) return console.log(err)
         console.log('saved to database')
-        res.redirect('/profile')
+        res.redirect('/post')
       })
     })
 
-    app.put('/messages', (req, res) => {
-      db.collection('messages')
-      .findOneAndUpdate({
+
+    app.put('/post/messages', (req, res) => {
+      db.collection('posts')
+      .findOneAndUpdate({postedBy: req.user._id}, {
         $set: {
-          thumbUp:req.body.thumbUp + 1
+          thumbUp: req.body.thumbUp + 1
         }
       }, {
         sort: {_id: -1},

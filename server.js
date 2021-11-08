@@ -10,7 +10,7 @@ const MongoClient = require('mongodb').MongoClient
 var mongoose = require('mongoose');
 var passport = require('passport');
 var flash    = require('connect-flash');
-var ObjectId = require('mongodb').ObjectId
+var ObjectID = require('mongodb').ObjectID
 var multer = require('multer')
 
 var morgan       = require('morgan');
@@ -22,6 +22,7 @@ var session      = require('express-session');
 
 // const db = require('./config/database').MongoURI;
 const PORT = process.env.PORT || 3000;
+// var ObjectId = new ObjectId();
 // configuration ===============================================================
 mongoose.connect(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true })
 const db = mongoose.connection;
@@ -29,7 +30,7 @@ db.on('error', (error) => {
     console.log(error)
 });
 db.once('open', () => {
-    require('./app/routes.js')(app, passport, db, multer, ObjectId);
+    require('./app/routes.js')(app, passport, db, multer, ObjectID);
     console.log('Connected to database')
 }) // connect to our database
 
